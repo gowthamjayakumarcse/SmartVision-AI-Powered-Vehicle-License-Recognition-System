@@ -1,174 +1,174 @@
-SmartVision: AI-Powered Vehicle License Recognition System
+# SmartVision: AI-Powered Vehicle License Recognition System
 
-An end-to-end number-plate detection and OCR pipeline featuring YOLOv8 for plate detection and EasyOCR for text reading. Use it in two ways:
+An advanced AI-based vehicle license plate recognition system combining **YOLOv8** for detection and **EasyOCR** for text recognition. SmartVision accurately detects, reads, and annotates license plates from **images and videos**, offering both a **Streamlit web interface** and a **Colab-compatible batch processor**.
 
-Colab script for batch video processing with advanced India/UK plate correction.
+---
 
-Streamlit app for quick image/video uploads with downloadable results.
+## 🚀 Key Features
 
-✨ Features
+* **YOLOv8 Detection:** Detects vehicle license plates with adjustable confidence and IoU thresholds.
+* **EasyOCR Integration:** Reads alphanumeric plate text with GPU acceleration (if available).
+* **Country-Specific Support:**
 
-YOLOv8-based plate detection with confidence/IoU controls. 
+  * UK format validation: `AA99AAA`
+  * India format correction with **state code normalization**, **digit-letter confusion mapping**, and **slot-wise repair logic**.
+* **Advanced OCR Preprocessing:** CLAHE contrast enhancement, grayscale, adaptive and OTSU thresholding, and upscaling for improved recognition accuracy.
+* **Temporal Text Stabilization:** Uses a deque-based majority voting system to stabilize plate text across video frames.
+* **Interactive Streamlit App:**
 
-ocr
+  * Upload images or videos
+  * View annotated results instantly
+  * Download **annotated media**, **CSV reports**, and **extracted text files**
+* **Colab-Compatible Script:** Batch process videos with automatic input/output handling for quick experimentation.
 
-EasyOCR text extraction (auto-GPU in Colab, CPU fallback in Streamlit).
+---
 
-Locale-aware plate normalization
+## 🧩 System Workflow
 
-UK format AA99AAA validation.
+1. **Detection:** YOLOv8 identifies bounding boxes for plates in each frame.
+2. **Preprocessing:** Plates are cropped, enhanced, and thresholded for OCR.
+3. **OCR (EasyOCR):** Extracts textual content from plate regions.
+4. **Post-Processing:**
 
-India format fixer with state code snapping, digit/letter swaps (e.g., O↔0, I↔1), and slot-wise repair. 
+   * Applies regex-based format validation for UK/India.
+   * Performs **keyword-based corrections** (e.g., 0↔O, 1↔I, 5↔S).
+5. **Stabilization:** Smooths recognition across multiple frames.
+6. **Output Generation:** Annotated visuals, logs, and CSV reports are saved.
 
-app
+---
 
-OCR robustness via grayscale, CLAHE, upscaling, adaptive/OTSU thresholds; tries multiple variants. 
+## 🧠 Technologies Used
 
-app
+| Component                 | Description                                            |
+| ------------------------- | ------------------------------------------------------ |
+| **YOLOv8**                | Vehicle license plate detection                        |
+| **EasyOCR**               | Optical Character Recognition engine                   |
+| **OpenCV**                | Image preprocessing, visualization, and video handling |
+| **Streamlit**             | Interactive UI for real-time image/video testing       |
+| **Python**                | Core programming language                              |
+| **Regex & State Mapping** | Country-specific plate format correction               |
 
-Temporal stabilization of plate text across frames (deque/majority vote).
+---
 
-Rich outputs: annotated image/video overlays, extracted plate text file, and CSV of detections (frame, box, confidence, OCR). 
+## 🧰 Installation
 
-ocr
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/SmartVision.git
+cd SmartVision
 
-📦 Installation
-# Core
-python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install --upgrade pip
+# Create and activate virtual environment
+python -m venv .venv
+source .venv/bin/activate   # On Windows: .venv\Scripts\activate
 
-# Dependencies
+# Install dependencies
+pip install -r requirements.txt
+```
+
+Alternatively, install manually:
+
+```bash
 pip install ultralytics easyocr opencv-python-headless numpy streamlit
+```
 
+---
 
-Colab users can also run the inline pip install lines present in the script comments. 
+## 💻 Usage
 
-app
+### Option 1: Streamlit Interface
 
-🚀 Quick Start
-A) Streamlit App (upload image/video)
+```bash
 streamlit run ocr.py
+```
+
+**Steps:**
+
+1. Upload your **YOLOv8 model (.pt)** or use the default (`yolov8n.pt`).
+2. Choose processing mode — **Image** or **Video**.
+3. Adjust **confidence**, **IoU**, and **OCR language** in the sidebar.
+4. Process, preview, and download annotated outputs (image/video/CSV).
+
+### Option 2: Colab Script
+
+1. Upload your YOLO `.pt` model and `.mp4` video file into `/content/`.
+2. Run `app.py`.
+3. Annotated video output will be saved as `output_with_license.mp4`.
+
+---
+
+## ⚙️ Configuration Options
+
+| Parameter     | Description                         | Default |
+| ------------- | ----------------------------------- | ------- |
+| `CONF_THRESH` | YOLO confidence threshold           | 0.25    |
+| `IOU_THRESH`  | Non-max suppression IoU threshold   | 0.45    |
+| `FRAME_SKIP`  | Skip frames during video processing | 1       |
+| `OCR_LANGS`   | OCR language list                   | ['en']  |
+
+---
+
+## 🧩 Project Structure
+
+```
+SmartVision/
+├── app.py           # Colab-compatible batch processing pipeline
+├── ocr.py           # Streamlit interface for image/video uploads
+├── requirements.txt # Dependencies
+└── models/           # Optional directory for YOLOv8 models
+```
+
+---
+
+## 📊 Example Outputs
+
+| Mode  | Input                  | Output                                     |
+| ----- | ---------------------- | ------------------------------------------ |
+| Image | Upload a car photo     | Annotated image with detected plate & text |
+| Video | Upload dashcam footage | Annotated video with stabilized OCR text   |
+
+---
+
+## 🧠 Performance Tips
+
+* Use **high-resolution inputs** for better OCR results.
+* Optimize frame skipping to balance speed and accuracy.
+* Tune YOLO confidence/IoU thresholds to reduce false positives.
+* For Indian plates, prefer the **Colab script** with advanced slot-based correction.
+
+---
+
+## 🧪 Example Datasets
+
+You can train or fine-tune YOLO models using:
+
+* **OpenALPR Benchmark Dataset**
+* **Indian License Plate Dataset (Kaggle)**
+* **UFPR-ALPR Dataset**
+
+---
+
+## 🧰 Future Enhancements
+
+* Add **multi-language OCR** for non-Latin scripts (Hindi, Arabic, etc.)
+* Integrate **vehicle make/model recognition**
+* Deploy a **web dashboard** for real-time monitoring
+* Add **cloud deployment** support (Docker + Streamlit Cloud)
+
+---
+
+## 🧾 License
+
+This project is released under the **MIT License**.
+
+---
+
+## 🙌 Acknowledgements
+
+* [Ultralytics YOLOv8](https://github.com/ultralytics/ultralytics)
+* [EasyOCR](https://github.com/JaidedAI/EasyOCR)
+* [OpenCV](https://opencv.org/)
+* [Streamlit](https://streamlit.io/)
+
+---
 
 
-Upload YOLOv8 .pt (or use default yolov8n.pt), choose Image or Video, adjust Confidence/IoU, pick OCR language(s), and process. 
-
-ocr
-
-Download: Annotated Image/Video and detections.csv from the UI. 
-
-ocr
-
-B) Colab Script (video → annotated video)
-
-Upload your YOLO .pt and input .mp4 into /content.
-
-Run app.py cells; it auto-picks the first .pt and .mp4 and writes output_with_license.mp4. 
-
-app
-
-🧠 How It Works
-
-Detection (YOLOv8) — runs on each frame/image to produce bounding boxes. Thresholds configurable. 
-
-ocr
-
-Preprocess for OCR — grayscale → CLAHE (Colab) / OTSU (Streamlit) → 2–3× upscaling; tries multiple binary variants to improve OCR reliability. 
-
-app
-
-OCR (EasyOCR) — restricted allow-list A–Z, 0–9 to reduce noise.
-
-Post-processing & Validation
-
-UK: strict regex ^[A-Z]{2}\d{2}[A-Z]{3}$.
-
-India: slot-wise repair (AA NN A{1..3} N{1..4}), state aliasing (e.g., OR→OD), and digit/letter confusion maps (O/0, I/1, S/5, B/8, etc.). 
-
-app
-
-Temporal Stabilization — per-box deque buffers last N reads and emits the majority label to avoid flicker.
-
-Output Rendering — draws boxes + labels; Streamlit offers downloads (image/video/CSV). 
-
-ocr
-
-🗂️ Project Structure
-.
-├── app.py   # Colab-oriented batch video pipeline (UK + India normalization)  ← recommended for datasets
-├── ocr.py   # Streamlit app for quick image/video processing & downloads
-└── models/  # (optional) place your YOLOv8 .pt file(s) here
-
-⚙️ Configuration Tips
-
-Streamlit defaults: DEFAULT_CONF=0.25, DEFAULT_IOU=0.45, frame_skip=1. Tweak in sidebar for speed/accuracy trade-off. 
-
-ocr
-
-Model choice: start with yolov8n.pt for CPU; use your finetuned license-plate model for best results. 
-
-ocr
-
-OCR langs: select additional languages in the sidebar if your plates include non-Latin scripts. 
-
-ocr
-
-GPU: Colab script enables GPU for EasyOCR when available; Streamlit uses CPU by default.
-
-📈 Performance Hints
-
-Tighter boxes → better OCR: use a plate-specific YOLO model if possible.
-
-Increase resolution: the pipeline already upscales crops; high-res sources still help. 
-
-app
-
-Adjust thresholds: raise confidence to reduce false positives; fine-tune IoU to control NMS. 
-
-ocr
-
-Leverage stabilization for videos; keep frame_skip low for fast motion. 
-
-ocr
-
-🧪 Sample Commands
-
-Run with default YOLO:
-
-streamlit run ocr.py
-
-
-Run with your custom model:
-
-Upload .pt via the Streamlit sidebar (or hardcode path in ocr.py if you prefer). 
-
-ocr
-
-Colab batch processing:
-
-Put model.pt and clip.mp4 in /content, execute app.py, collect output_with_license.mp4. 
-
-app
-
-🛠️ Troubleshooting
-
-“YOLO model not found” in Streamlit: upload a .pt file from the sidebar or ensure yolov8n.pt exists in the working directory. 
-
-ocr
-
-Blank OCR / low accuracy: ensure plate is readable; try different thresholds or increase video resolution; verify locale regex (UK) or use the Colab script for India formats.
-
-Slow processing: increase frame_skip, use a lighter YOLO model, or enable GPU in Colab. 
-
-ocr
-
-📄 License
-
-MIT (or your preferred license).
-
-🙏 Acknowledgements
-
-Ultralytics YOLOv8 for detection
-
-EasyOCR for text recognition
-
-OpenCV for preprocessing and rendering
